@@ -46,4 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
         section.classList.add('fade-in');
         observer.observe(section);
     });
+
+    // Email copy logic
+    const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    document.body.appendChild(toast);
+
+    emailLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent opening default mail client
+            const email = link.getAttribute('href').replace('mailto:', '');
+            
+            navigator.clipboard.writeText(email).then(() => {
+                toast.innerHTML = `<i class="fas fa-check-circle" style="color: var(--accent-color); margin-right: 8px;"></i> Copied <b>${email}</b> to clipboard!`;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }).catch(err => {
+                console.error('Failed to copy email: ', err);
+                toast.innerHTML = `Email: <b>${email}</b>`;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            });
+        });
+    });
 });
+
